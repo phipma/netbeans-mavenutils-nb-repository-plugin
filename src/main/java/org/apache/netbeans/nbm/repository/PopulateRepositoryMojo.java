@@ -1,20 +1,23 @@
-/* ==========================================================================
- * Copyright 2003-2006 Mevenide Team
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- * =========================================================================
- */
 package org.apache.netbeans.nbm.repository;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,19 +94,20 @@ import org.codehaus.plexus.util.StringUtils;
  * A goal for identifying NetBeans modules from the installation and populating the local
  * repository with them. Optionally you can also deploy to a remote repository.
  * <p>
- * If you are looking for an existing remote repository for NetBeans artifacts, check out
+ * If you are looking for an existing remote repository for NetBeans artifacts, check out <a href="https://search.maven.org/">Maven Central</a>. 
  * <a href="http://bits.netbeans.org/nexus/content/groups/netbeans/">http://bits.netbeans.org/nexus/content/groups/netbeans/</a>,
- * it contains API artifacts for multiple releases.
- * <a href="http://bits.netbeans.org/netbeans/trunk/maven-snapshot/">http://bits.netbeans.org/netbeans/trunk/maven-snapshot/</a>
- * may also be used for <code>SNAPSHOT</code> artifacts if you wish to test development builds.
- * </p><p>
- * See this <a href="http://mojo.codehaus.org/nbm-maven/nbm-maven-plugin/repository.html">HOWTO</a> on how to generate the NetBeans binaries required
+ * contains contains API artifacts for older NetBeans releases.
+ * <a href="https://repository.apache.org/content/groups/snapshots">https://repository.apache.org/content/groups/snapshots</a>
+ * may also be used for <code>dev-SNAPSHOT</code> artifacts if you wish to test development builds.
+ * </p>
+ * <p>
+ * See this <a href="repository.html">HOWTO</a> on how to generate the NetBeans binaries required
  * by this goal.
  * </p>
  *
- * @author <a href="mailto:mkleint@codehaus.org">Milos Kleint</a>
+ * @author Milos Kleint
  */
-@Mojo(name="populate", aggregator=true, requiresProject=false)
+@Mojo( name = "populate", aggregator = true, requiresProject = false )
 public class PopulateRepositoryMojo
     extends AbstractNetbeansMojo
 {
@@ -118,30 +122,36 @@ public class PopulateRepositoryMojo
      * eg. for org.netbeans value will generate org.netbeans.cluster groupId for clusters and org.netbeans.modules for module artifacts.
      * @since 1.2
      */
-    @Parameter(property="groupIdPrefix", defaultValue = "org.netbeans")
+    @Parameter( property = "groupIdPrefix", defaultValue = "org.netbeans" )
     private String groupIdPrefix;
     
     /**
      * an url where to deploy the NetBeans artifacts. Optional, if not specified, the artifacts will be only installed
      * in local repository, if you need to give credentials to access remote repo, the id of the server is hardwired to "netbeans".
      */
-    @Parameter(property="deployUrl")
+    @Parameter( property = "deployUrl" )
     private String deployUrl;
 
+    /**
+     * an string id representing the server
+     */
+    @Parameter( defaultValue = "netbeans" , property = "deployId" )
+    private String deployId;
+    
     /**
      * By default the generated metadata is installed in local repository.
      * Setting this parameter to false will avoid installing the bits. Only meaningful together with
      * a defined "deployUrl" parameter.
      * @since 3.0
      */
-    @Parameter(defaultValue="false", property="skipInstall")
+    @Parameter( defaultValue = "false", property = "skipInstall" )
     private boolean skipLocalInstall;
 
 
     /**
      * Location of NetBeans installation
      */
-    @Parameter(property="netbeansInstallDirectory", required=true)
+    @Parameter( property = "netbeansInstallDirectory", required = true )
     protected File netbeansInstallDirectory;
 
     /**
@@ -149,13 +159,13 @@ public class PopulateRepositoryMojo
      * expand it to a directory, it should contain multiple zip files. Define this parameter as absolute path to the zip files folder.
      *
      */
-    @Parameter(property="netbeansJavadocDirectory")
+    @Parameter( property = "netbeansJavadocDirectory" )
     protected File netbeansJavadocDirectory;
 
     /**
      * Assumes a folder with &lt;code-name-base&gt;.zip files containing sources for modules.
      */
-    @Parameter(property="netbeansSourcesDirectory")
+    @Parameter( property = "netbeansSourcesDirectory" )
     protected File netbeansSourcesDirectory;
 
     /**
@@ -165,7 +175,7 @@ public class PopulateRepositoryMojo
      * Assumes a folder with &lt;code-name-base&gt;.nbm files containing nbm files for modules.
      * @since 3.0
      */
-    @Parameter(property="netbeansNbmDirectory", required=true)
+    @Parameter( property = "netbeansNbmDirectory", required = true )
     protected File netbeansNbmDirectory;
 
     /**
@@ -177,7 +187,7 @@ public class PopulateRepositoryMojo
      * Highly Recommended!
      * </p>
      */
-    @Parameter(property="forcedVersion")
+    @Parameter( property = "forcedVersion" )
     protected String forcedVersion;
 
     /**
@@ -190,7 +200,7 @@ public class PopulateRepositoryMojo
      * Use the {@code download} goal to retrieve the index.
      * @since 3.0
      */
-    @Parameter(property="nexusIndexDirectory")
+    @Parameter( property = "nexusIndexDirectory" )
     private File nexusIndexDirectory;
 
     /**
@@ -198,7 +208,7 @@ public class PopulateRepositoryMojo
      * Only meaningful when {@code forcedVersion} is defined.
      * @since 3.7
      */
-    @Parameter(defaultValue="true", property="defineCluster")   
+    @Parameter( defaultValue = "true", property = "defineCluster" )   
     private boolean defineCluster;
 
     /**
@@ -208,7 +218,7 @@ public class PopulateRepositoryMojo
      * Currently only supported when {@code forcedVersion} is defined.
      * @since 3.7
      */
-    @Parameter(property="dependencyRepositoryUrl")
+    @Parameter( property = "dependencyRepositoryUrl" )
     private String dependencyRepositoryUrl;
 
     /**
@@ -216,7 +226,7 @@ public class PopulateRepositoryMojo
      * Only meaningful when {@code dependencyRepositoryUrl} is defined.
      * @since 3.7
      */
-    @Parameter(defaultValue="temp", property="dependencyRepositoryId")
+    @Parameter( defaultValue = "temp", property = "dependencyRepositoryId" )
     private String dependencyRepositoryId;
 
     /**
@@ -225,14 +235,14 @@ public class PopulateRepositoryMojo
      *
      * @since 1.4
      */
-    @Parameter(property = "parentGAV", required = false)
+    @Parameter( property = "parentGAV", required = false )
     private String parentGAV;
     
     // <editor-fold defaultstate="collapsed" desc="Component parameters">
     /**
      * Local maven repository.
      */
-    @Parameter(required=true, readonly=true, defaultValue="${localRepository}")
+    @Parameter( required = true, readonly = true, defaultValue = "${localRepository}" )
     protected ArtifactRepository localRepository;
 
     /**
@@ -286,12 +296,13 @@ public class PopulateRepositoryMojo
         Project antProject = antProject();
         ArtifactRepository deploymentRepository = null;
 
-        if (parentGAV != null) 
+        if ( parentGAV != null ) 
         {
             // populate artefactParent
             artefactParent = new Parent();
-            String[] split = parentGAV.split(":");
-            if (split.length != 3) {
+            String[] split = parentGAV.split( ":" );
+            if ( split.length != 3 ) 
+            {
                 throw new MojoExecutionException(
                     "parentGAV should respect the following format groupId:artefactId:version" );
             }
@@ -304,7 +315,7 @@ public class PopulateRepositoryMojo
         {
             ArtifactRepositoryLayout layout = new DefaultRepositoryLayout();
             deploymentRepository = repositoryFactory.createDeploymentArtifactRepository(
-                "netbeans", deployUrl, layout, true );
+                deployId, deployUrl, layout, true );
         }
         else if ( skipLocalInstall )
         {
@@ -405,7 +416,7 @@ public class PopulateRepositoryMojo
                     artifact = "org-netbeans-core-startup-base";
                 }                
                 String version = forcedVersion == null ? examinator.getSpecVersion() : forcedVersion;
-                String group = groupIdPrefix + (examinator.isOsgiBundle() ? GROUP_EXTERNAL : examinator.hasPublicPackages() ? GROUP_API : GROUP_IMPL);
+                String group = groupIdPrefix + ( examinator.isOsgiBundle() ? GROUP_EXTERNAL : examinator.hasPublicPackages() ? GROUP_API : GROUP_IMPL );
                 Artifact art = createArtifact( artifact, version, group );
                 if ( examinator.isOsgiBundle() )
                 {
@@ -550,8 +561,9 @@ public class PopulateRepositoryMojo
                                             b.append( ' ' );
                                         }
                                         b.append( dep.getGroupId() ).append( ':' ).append( dep.getArtifactId() ).append( ':' ).append( dep.getVersion() );
-                                        if (dep.getClassifier() != null) {
-                                            b.append(":").append(dep.getClassifier());
+                                        if ( dep.getClassifier() != null ) 
+                                        {
+                                            b.append( ":" ).append( dep.getClassifier() );
                                         }
                                     }
                                     mani.getMainAttributes().putValue( "Maven-Class-Path", b.toString() );
@@ -782,7 +794,8 @@ public class PopulateRepositoryMojo
         mavenModel.setVersion( wrapper.getVersion() );
         mavenModel.setPackaging( "jar" );
         mavenModel.setModelVersion( "4.0.0" );
-        if ( artefactParent != null ) {
+        if ( artefactParent != null ) 
+        {
             mavenModel.setParent( artefactParent );
         }
         ExamineManifest man = wrapper.getModuleManifest();
@@ -804,7 +817,8 @@ public class PopulateRepositoryMojo
                     dep.setType( "jar" );
                     //we don't want the API modules to depend on non-api ones..
                     // otherwise the transitive dependency mechanism pollutes your classpath..
-                    if ( wrapper.getModuleManifest().hasPublicPackages() && !wr.getModuleManifest().hasPublicPackages() )
+                    if ( wrapper.getModuleManifest().hasPublicPackages() 
+                            && !wr.getModuleManifest().hasPublicPackages() )
                     {
                         dep.setScope( "runtime" );
                     }
@@ -823,10 +837,14 @@ public class PopulateRepositoryMojo
                     dep.setVersion( forcedVersion );
                     ArtifactRepositoryPolicy policy = new ArtifactRepositoryPolicy();
                     List<ArtifactRepository> repos = Collections.singletonList(
-                            repositoryFactory.createArtifactRepository( dependencyRepositoryId, dependencyRepositoryUrl, artifactRepositoryLayout, policy, policy) );
+                            repositoryFactory.createArtifactRepository( 
+                                    dependencyRepositoryId, dependencyRepositoryUrl, artifactRepositoryLayout, policy, policy ) );
                     try
                     {
-                        artifactResolver.resolve( artifactFactory.createBuildArtifact( groupIdPrefix + GROUP_API, artifactId, forcedVersion, "pom" ), repos, localRepository );
+                        artifactResolver.resolve(
+                                artifactFactory.createBuildArtifact( groupIdPrefix + GROUP_API, artifactId, forcedVersion, "pom" ),
+                                repos, 
+                                localRepository );
                         dep.setGroupId( groupIdPrefix + GROUP_API );
                     }
                     catch ( AbstractArtifactResolutionException x )
@@ -955,7 +973,8 @@ public class PopulateRepositoryMojo
         {
             MessageDigest shaDig = MessageDigest.getInstance( "SHA1" );
             InputStream is = new FileInputStream( f );
-            try {
+            try
+            {
                 OutputStream os = new DigestOutputStream( new NullOutputStream(), shaDig );
                 IOUtil.copy( is, os );
                 os.close();
@@ -967,12 +986,12 @@ public class PopulateRepositoryMojo
             String sha = encode( shaDig.digest() );
             TermQuery q = new TermQuery( new Term( "1", sha ) );
             TopScoreDocCollector collector = TopScoreDocCollector.create( 5 );
-            searcher.search(q, collector);
+            searcher.search( q, collector );
             ScoreDoc[] hits = collector.topDocs().scoreDocs;
             if ( hits.length >= 1 )
             {
-                int docId = hits[0].doc;    
-                Document doc = searcher.doc(docId);                
+                int docId = hits[0].doc;
+                Document doc = searcher.doc( docId );
                 IndexableField idField = doc.getField( "u" );
                 if ( idField != null )
                 {
@@ -1016,7 +1035,8 @@ public class PopulateRepositoryMojo
         mavenModel.setVersion( wrapper.getVersion() );
         mavenModel.setPackaging( "jar" );
         mavenModel.setModelVersion( "4.0.0" );
-        if ( artefactParent != null ) {
+        if ( artefactParent != null ) 
+        {
             mavenModel.setParent( artefactParent );
         }
         mavenModel.setName( 
@@ -1065,7 +1085,8 @@ public class PopulateRepositoryMojo
 //        mavenModel.setPackaging("nbm-application");
         mavenModel.setPackaging( "pom" );
         mavenModel.setModelVersion( "4.0.0" );
-        if ( artefactParent != null ) {
+        if ( artefactParent != null ) 
+        {
             mavenModel.setParent( artefactParent );
         }
         List<Dependency> deps = new ArrayList<Dependency>();
@@ -1123,8 +1144,8 @@ public class PopulateRepositoryMojo
     {
         return artifactFactory.createBuildArtifact( groupIdPrefix + GROUP_CLUSTER, artifact, version, "pom" );
     }
-
-    private static Pattern PATTERN_CLUSTER = Pattern.compile( "([a-zA-Z]+)[0-9\\.]*" );
+    
+    private static final Pattern PATTERN_CLUSTER = Pattern.compile( "([a-zA-Z]+)[0-9\\.]*" );
     static String stripClusterName( String key )
     {
         Matcher m = PATTERN_CLUSTER.matcher( key );
